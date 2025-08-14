@@ -1,7 +1,7 @@
 {
   "name": "Brightdata MCP",
   "description": "An MCP interface into the Bright Data toolset",
-  "repository": "https://github.com/brightdata/brightdata-mcp",
+  "repository": "https://github.com/dsouza-anush/brightdata-mcp-heroku",
   "keywords": ["mcp", "brightdata", "web-scraping", "data-extraction"],
   "env": {
     "API_TOKEN": {

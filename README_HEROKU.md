@@ -6,7 +6,7 @@ This is a fork of the [Bright Data MCP](https://github.com/brightdata/brightdata
 
 You can deploy this MCP server to Heroku with one click using the button below:
 
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/brightdata/brightdata-mcp)
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/dsouza-anush/brightdata-mcp-heroku)
 
 ## Configuration
 
