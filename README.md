@@ -7,6 +7,12 @@
 <h1 align="center">The Web MCP</h1>
 <h3 align="center">Enhance your LLM and AI agents with real-time web access</h3>
 
+<p align="center">
+  <a href="https://heroku.com/deploy?template=https://github.com/dsouza-anush/brightdata-mcp-heroku">
+    <img src="https://www.herokucdn.com/deploy/button.svg" alt="Deploy to Heroku">
+  </a>
+</p>
+
 <div align="center">
   
 <p align="center">
