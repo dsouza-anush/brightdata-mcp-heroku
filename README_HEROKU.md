@@ -10,7 +10,7 @@ This is a fork of the [Bright Data MCP](https://github.com/brightdata/brightdata
 
 ## Configuration
 
-After deployment, make sure to set the following environment variables in your Heroku app settings:
+After deployment, make sure to set the following environment variables in your Heroku app settings. Note that the app is configured to scale to 0 web dynos when not in use, which is recommended for MCP servers:
 
 - `API_TOKEN` (required): Your Bright Data API token
 - `WEB_UNLOCKER_ZONE` (optional): Zone name for web unlocker (default: mcp_unlocker)
