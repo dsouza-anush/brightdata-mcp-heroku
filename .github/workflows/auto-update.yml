@@ -10,12 +10,14 @@ on:
 jobs:
   update:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
+          ref: main
 
       - name: Setup Git Identity
         run: |
@@ -66,30 +68,55 @@ jobs:
           if git diff --name-only HEAD@{1} HEAD | grep -q "README.md"; then
             echo "README.md was modified upstream, preserving our Heroku button section"
             
-            # Check if README.md contains Heroku button at top
-            if ! grep -q "<p align=\"center\">\n  <a href=\"https://heroku.com/deploy?template=https://github.com/dsouza-anush/brightdata-mcp-heroku\">" README.md; then
-              # Add Heroku button to top of README.md
-              sed -i 's/<h3 align="center">Enhance your LLM and AI agents with real-time web access<\/h3>/<h3 align="center">Enhance your LLM and AI agents with real-time web access<\/h3>\n\n<p align="center">\n  <a href="https:\/\/heroku.com\/deploy?template=https:\/\/github.com\/dsouza-anush\/brightdata-mcp-heroku">\n    <img src="https:\/\/www.herokucdn.com\/deploy\/button.svg" alt="Deploy to Heroku">\n  <\/a>\n<\/p>/' README.md
+            # Fix README.md with Heroku button
+            # First, create a backup of current README
+            cp README.md README.md.bak
+            
+            # Add Heroku button below title if not present
+            if ! grep -q "Deploy to Heroku" README.md; then
+              # Get the line number of the h3 tag
+              TITLE_LINE=$(grep -n "<h3 align=\"center\">Enhance your LLM and AI agents with real-time web access</h3>" README.md | cut -d: -f1)
+              
+              if [ -n "$TITLE_LINE" ]; then
+                # Use awk to insert content after the h3 line
+                awk -v line="$TITLE_LINE" -v heroku_button='
+<p align="center">
+  <a href="https://heroku.com/deploy?template=https://github.com/dsouza-anush/brightdata-mcp-heroku">
+    <img src="https://www.herokucdn.com/deploy/button.svg" alt="Deploy to Heroku">
+  </a>
+</p>' '
+                NR == line {print; print heroku_button; next}
+                {print}
+                ' README.md.bak > README.md
+              fi
             fi
             
-            # Check for Deploy to Heroku section in table of contents
-            if ! grep -q "^\- \[☁️ Deploy to Heroku\](#%EF%B8%8F-deploy-to-heroku)" README.md; then
-              # Add Deploy to Heroku to table of contents
-              sed -i '/## Table of Content/,/^$/ s/- \[🎮 Try Bright Data MCP Playgrounds\]/- [☁️ Deploy to Heroku](#%EF%B8%8F-deploy-to-heroku)\n- [🎮 Try Bright Data MCP Playgrounds]/' README.md
+            # Add to table of contents if not present
+            if ! grep -q "Deploy to Heroku" README.md; then
+              # Get the line of the table of contents
+              TOC_LINE=$(grep -n "## Table of Content" README.md | cut -d: -f1)
+              
+              if [ -n "$TOC_LINE" ]; then
+                # Find the MCP Playgrounds line in TOC
+                PLAYGROUNDS_LINE=$(grep -n "- \\[🎮 Try Bright Data MCP Playgrounds\\]" README.md | cut -d: -f1)
+                
+                if [ -n "$PLAYGROUNDS_LINE" ]; then
+                  # Insert Deploy to Heroku entry before Playgrounds
+                  sed -i "${PLAYGROUNDS_LINE}i- [☁️ Deploy to Heroku](#%EF%B8%8F-deploy-to-heroku)" README.md
+                fi
+              fi
             fi
             
-            # Check if Deploy to Heroku section exists
+            # Add Deploy to Heroku section if not present
             if ! grep -q "^## ☁️ Deploy to Heroku" README.md; then
-              # Add Deploy to Heroku section
-              sed -i '/## 🎮 Try Bright Data MCP Playgrounds/i\
-## ☁️ Deploy to Heroku\n\
-\n\
-You can deploy this MCP server to Heroku with one click using the button below:\n\
-\n\
-[![Deploy](https:\/\/www.herokucdn.com\/deploy\/button.svg)](https:\/\/heroku.com\/deploy?template=https:\/\/github.com\/dsouza-anush\/brightdata-mcp-heroku)\n\
-\n\
-After deployment, make sure to set the required environment variables in your Heroku app settings.\n\
-' README.md
+              # Find Playgrounds heading
+              PLAYGROUNDS_HEADING=$(grep -n "## 🎮 Try Bright Data MCP Playgrounds" README.md | cut -d: -f1)
+              
+              if [ -n "$PLAYGROUNDS_HEADING" ]; then
+                # Insert deploy section before playgrounds heading
+                HEROKU_SECTION="## ☁️ Deploy to Heroku\n\nYou can deploy this MCP server to Heroku with one click using the button below:\n\n[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/dsouza-anush/brightdata-mcp-heroku)\n\nAfter deployment, make sure to set the required environment variables in your Heroku app settings.\n"
+                sed -i "${PLAYGROUNDS_HEADING}i${HEROKU_SECTION}\n" README.md
+              fi
             fi
             
             git add README.md
