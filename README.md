@@ -48,6 +48,7 @@ Welcome to the official Bright Data's Web MCP server, solving web access for LLM
 - [⚠️ Security Best Practices](#%EF%B8%8F-security-best-practices)
 - [🔧 Account Setup](#-account-setup)
 - [🔌 Other MCP Clients](#-other-mcp-clients)
+- [☁️ Deploy to Heroku](#%EF%B8%8F-deploy-to-heroku)
 - [🎮 Try Bright Data MCP Playgrounds](#-try-bright-data-mcp-playgrounds)
 - [⚠️ Troubleshooting](#%EF%B8%8F-troubleshooting)
 - [👨‍💻 Contributing](#-contributing)
@@ -265,6 +266,14 @@ npx @brightdata/mcp
 ## 🔄 Changelog
 
 [CHANGELOG.md](https://github.com/brightdata-com/brightdata-mcp/blob/main/CHANGELOG.md)
+
+## ☁️ Deploy to Heroku
+
+You can deploy this MCP server to Heroku with one click using the button below:
+
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/brightdata/brightdata-mcp)
+
+After deployment, make sure to set the required environment variables in your Heroku app settings.
 
 ## 🎮 Try Bright Data MCP Playgrounds
 

@@ -1,0 +1,42 @@
+{
+  "name": "Brightdata MCP",
+  "description": "An MCP interface into the Bright Data toolset",
+  "repository": "https://github.com/brightdata/brightdata-mcp",
+  "keywords": ["mcp", "brightdata", "web-scraping", "data-extraction"],
+  "env": {
+    "API_TOKEN": {
+      "description": "Your Bright Data API token",
+      "required": true
+    },
+    "WEB_UNLOCKER_ZONE": {
+      "description": "Zone name for web unlocker (default: mcp_unlocker)",
+      "required": false,
+      "value": "mcp_unlocker"
+    },
+    "BROWSER_ZONE": {
+      "description": "Zone name for browser (default: mcp_browser)",
+      "required": false,
+      "value": "mcp_browser"
+    },
+    "PRO_MODE": {
+      "description": "Enable pro mode tools (true/false)",
+      "required": false,
+      "value": "false"
+    },
+    "RATE_LIMIT": {
+      "description": "Rate limit in format '100/1h' or '50/30m'",
+      "required": false
+    }
+  },
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    }
+  ],
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "basic"
+    }
+  }
+}
