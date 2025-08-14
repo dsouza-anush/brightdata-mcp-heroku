@@ -281,6 +281,8 @@ You can deploy this MCP server to Heroku with one click using the button below:
 
 After deployment, make sure to set the required environment variables in your Heroku app settings.
 
+This MCP server is compatible with Heroku Inference and can be registered with your AI models. For detailed instructions, see the [Heroku-specific documentation](README_HEROKU.md#using-with-heroku-inference).
+
 ## 🎮 Try Bright Data MCP Playgrounds
 
 Want to try Bright Data MCP without setting up anything? 

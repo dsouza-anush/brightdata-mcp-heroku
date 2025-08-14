@@ -18,6 +18,26 @@ After deployment, make sure to set the following environment variables in your H
 - `PRO_MODE` (optional): Enable pro mode tools (true/false)
 - `RATE_LIMIT` (optional): Rate limit in format '100/1h' or '50/30m'
 
+## Using with Heroku Inference
+
+This MCP server can be registered with Heroku Inference to provide web data access to LLMs. Follow these steps:
+
+1. Deploy the app to Heroku using the button above
+2. Configure your API_TOKEN and other environment variables
+3. Register the MCP server with your Heroku Managed Inference model using this command:
+
+```bash
+heroku ai:models:create MODEL_NAME -a YOUR_APP_NAME --as INFERENCE
+```
+
+Or attach it to an existing model:
+
+```bash
+heroku addons:attach MODEL_RESOURCE -a YOUR_APP_NAME --as INFERENCE
+```
+
+The MCP server uses the process name `mcp-brightdata` for registration with Heroku Inference.
+
 ## Keeping Up to Date with the Original Repository
 
 This repository includes a script (`update_from_upstream.sh`) that can be used to update your fork with changes from the original Bright Data MCP repository while preserving the Heroku-specific changes.
