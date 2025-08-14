@@ -20,6 +20,8 @@ PRESERVED_FILES=(
   "Procfile"
   "verify_heroku_config.js"
   "update_from_upstream.sh"
+  ".github/workflows/auto-update.yml"
+  "README_HEROKU.md"
 )
 
 # Check if README.md was modified upstream

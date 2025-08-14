@@ -1,0 +1,112 @@
+name: Auto Update from Upstream
+
+on:
+  schedule:
+    # Run once a day at midnight UTC
+    - cron: '0 0 * * *'
+  # Allow manual triggering
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Git Identity
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+
+      - name: Add Upstream Remote
+        run: |
+          git remote add upstream https://github.com/brightdata/brightdata-mcp.git
+          git remote -v
+
+      - name: Fetch Upstream Changes
+        run: |
+          git fetch upstream
+          
+      - name: Check for Updates
+        id: check-updates
+        run: |
+          if git log HEAD..upstream/main --oneline | grep -q .; then
+            echo "updates_available=true" >> $GITHUB_OUTPUT
+            echo "Updates available from upstream repository."
+          else
+            echo "updates_available=false" >> $GITHUB_OUTPUT
+            echo "No updates available from upstream repository."
+          fi
+
+      - name: Apply Updates
+        if: steps.check-updates.outputs.updates_available == 'true'
+        run: |
+          # Create a temporary branch for updates
+          git checkout -b temp-update
+          
+          # Merge upstream changes
+          git merge upstream/main -m "Auto-merge upstream changes"
+          
+          # List of files we want to preserve (Heroku-specific files)
+          PRESERVED_FILES=("app.json" "Procfile" "verify_heroku_config.js" "update_from_upstream.sh" ".github/workflows/auto-update.yml" "README_HEROKU.md")
+          
+          # Make sure our preserved files are not overwritten
+          for file in "${PRESERVED_FILES[@]}"; do
+            if [ -f "$file" ]; then
+              git checkout HEAD@{1} -- "$file"
+              git add "$file"
+            fi
+          done
+          
+          # Check if README.md was modified upstream
+          if git diff --name-only HEAD@{1} HEAD | grep -q "README.md"; then
+            echo "README.md was modified upstream, preserving our Heroku button section"
+            
+            # Check if README.md contains Heroku button at top
+            if ! grep -q "<p align=\"center\">\n  <a href=\"https://heroku.com/deploy?template=https://github.com/dsouza-anush/brightdata-mcp-heroku\">" README.md; then
+              # Add Heroku button to top of README.md
+              sed -i 's/<h3 align="center">Enhance your LLM and AI agents with real-time web access<\/h3>/<h3 align="center">Enhance your LLM and AI agents with real-time web access<\/h3>\n\n<p align="center">\n  <a href="https:\/\/heroku.com\/deploy?template=https:\/\/github.com\/dsouza-anush\/brightdata-mcp-heroku">\n    <img src="https:\/\/www.herokucdn.com\/deploy\/button.svg" alt="Deploy to Heroku">\n  <\/a>\n<\/p>/' README.md
+            fi
+            
+            # Check for Deploy to Heroku section in table of contents
+            if ! grep -q "^\- \[☁️ Deploy to Heroku\](#%EF%B8%8F-deploy-to-heroku)" README.md; then
+              # Add Deploy to Heroku to table of contents
+              sed -i '/## Table of Content/,/^$/ s/- \[🎮 Try Bright Data MCP Playgrounds\]/- [☁️ Deploy to Heroku](#%EF%B8%8F-deploy-to-heroku)\n- [🎮 Try Bright Data MCP Playgrounds]/' README.md
+            fi
+            
+            # Check if Deploy to Heroku section exists
+            if ! grep -q "^## ☁️ Deploy to Heroku" README.md; then
+              # Add Deploy to Heroku section
+              sed -i '/## 🎮 Try Bright Data MCP Playgrounds/i\
+## ☁️ Deploy to Heroku\n\
+\n\
+You can deploy this MCP server to Heroku with one click using the button below:\n\
+\n\
+[![Deploy](https:\/\/www.herokucdn.com\/deploy\/button.svg)](https:\/\/heroku.com\/deploy?template=https:\/\/github.com\/dsouza-anush\/brightdata-mcp-heroku)\n\
+\n\
+After deployment, make sure to set the required environment variables in your Heroku app settings.\n\
+' README.md
+            fi
+            
+            git add README.md
+          fi
+          
+          # Commit the preserved changes
+          git commit -m "Preserve Heroku-specific changes" || echo "No changes needed"
+          
+          # Checkout back to main branch
+          git checkout main
+          
+          # Merge the temporary branch
+          git merge temp-update -m "Auto-update from upstream with preserved Heroku changes"
+          
+          # Delete the temporary branch
+          git branch -D temp-update
+
+      - name: Push Changes
+        if: steps.check-updates.outputs.updates_available == 'true'
+        run: git push origin main
