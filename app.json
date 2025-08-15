@@ -18,11 +18,6 @@
       "required": false,
       "value": "mcp_browser"
     },
-    "PRO_MODE": {
-      "description": "Enable pro mode tools (true/false)",
-      "required": false,
-      "value": "false"
-    },
     "RATE_LIMIT": {
       "description": "Rate limit in format '100/1h' or '50/30m'",
       "required": false

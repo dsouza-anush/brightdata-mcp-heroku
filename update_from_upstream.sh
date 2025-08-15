@@ -62,6 +62,19 @@ for file in "${PRESERVED_FILES[@]}"; do
   fi
 done
 
+# Special handling for server.js to make sure it always enables all tools
+if [ -f "server.js" ]; then
+  echo "Ensuring server.js enables all tools by default"
+  # Remove pro_mode check
+  sed -i 's/const pro_mode = process.env.PRO_MODE === .true.;/\/\/ All tools are enabled by default in this version/g' server.js
+  sed -i 's/const pro_mode_tools = \[.search_engine., .scrape_as_markdown.\];/\/\/ No tool restrictions/g' server.js
+  
+  # Modify addTool function to always add all tools
+  sed -i 's/const addTool = (tool) => {\n    if (!pro_mode \&\& !pro_mode_tools.includes(tool.name)) \n        return;\n    server.addTool(tool);/const addTool = (tool) => {\n    \/\/ Register all tools without restriction\n    server.addTool(tool);/g' server.js
+  
+  git add server.js
+}
+
 # Commit the preserved changes
 git commit -m "Preserve Heroku-specific changes" || echo "No changes needed"
 

@@ -184,7 +184,7 @@ https://mcp.brightdata.com/mcp?token=YOUR_API_TOKEN_HERE
         "RATE_LIMIT": "<optional if you want to change rate limit format: limit/time+unit, e.g., 100/1h, 50/30m, 10/5s>",
         "WEB_UNLOCKER_ZONE": "<optional if you want to override the web unlocker zone name - default is mcp_unlocker>",
         "BROWSER_ZONE": "<optional if you want to override the browser zone name - defaults is mcp_browser>",
-        "PRO_MODE": "<optional boolean, defaults to false. Set to true to expose all tools including browser and web_data_* tools>"
+        "# Note: All tools are available by default in this Heroku version"
       }
     }
   }
@@ -195,11 +195,10 @@ https://mcp.brightdata.com/mcp?token=YOUR_API_TOKEN_HERE
 
 > **Important:** Pro mode **is not included in the free tier** and will incur additional charges. If you choose to use **Pro mode**, you’ll gain access to all 60 tools but please be aware of the associated costs.
 
-To enable **Pro mode**, simply add `"PRO_MODE"=true` to your enviroment variables.
 
 [List of Available Tools](https://github.com/brightdata-com/brightdata-mcp/blob/main/assets/Tools.md)
 
-**Note**: By default, only basic tools (`search_engine` and `scrape_as_markdown`) are exposed. To access all tools including browser automation and web data extraction, enable `PRO_MODE` in your configuration (see Account Setup section).
+**Note**: This Heroku version includes all tools by default, including browser automation and web data extraction tools.
 
 ## ⚠️ Security Best Practices
 
@@ -216,23 +215,21 @@ Instead:
 
 ####   Optional:
 
-3. Enable Pro Mode (for access to all tools):
-   - Set `PRO_MODE=true` in your environment configuration to access browser automation, structured data extraction, and all available tools
-   - Default: `false` (only exposes `search_engine` and `scrape_as_markdown` tools)
-   - See the advanced configuration example above for implementation details
+3. All tools are available by default in this version.
 
-4. Configure rate limiting:
+
+3. Configure rate limiting:
    - Set the `RATE_LIMIT` environment variable to control API usage
    - Format: `limit/time+unit` (e.g., `100/1h` for 100 calls per hour)
    - Supported time units: seconds (s), minutes (m), hours (h)
    - Examples: `RATE_LIMIT=100/1h`, `RATE_LIMIT=50/30m`, `RATE_LIMIT=10/5s`
    - Rate limiting is session-based (resets when server restarts)
 
-5. Create a custom Web Unlocker zone 
+4. Create a custom Web Unlocker zone 
    - By default, we create a Web Unlocker zone automatically using your API token
    - For more control, you can create your own Web Unlocker zone in your [control panel](https://brightdata.com/cp/zones) and specify it with the `WEB_UNLOCKER_ZONE` environment variable
 
-6. Create a custom  Browser API zone:
+5. Create a custom  Browser API zone:
    - By default, we create a Browser API zone automatically using your API token.
    - For more control, you can create your own Browser API zone in your [control panel](https://brightdata.com/cp/zones) and specify it with the `BROWSER_ZONE` environment variable
 

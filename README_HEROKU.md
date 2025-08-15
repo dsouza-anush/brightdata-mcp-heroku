@@ -15,7 +15,6 @@ After deployment, make sure to set the following environment variables in your H
 - `API_TOKEN` (required): Your Bright Data API token
 - `WEB_UNLOCKER_ZONE` (optional): Zone name for web unlocker (default: mcp_unlocker)
 - `BROWSER_ZONE` (optional): Zone name for browser (default: mcp_browser)
-- `PRO_MODE` (optional): Enable pro mode tools (true/false)
 - `RATE_LIMIT` (optional): Rate limit in format '100/1h' or '50/30m'
 
 ## Using with Heroku Inference
