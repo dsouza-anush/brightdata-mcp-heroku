@@ -40,8 +40,15 @@ jobs:
             echo "updates_available=true" >> $GITHUB_OUTPUT
             echo "Updates available from upstream repository."
           else
-            echo "updates_available=false" >> $GITHUB_OUTPUT
-            echo "No updates available from upstream repository."
+            # When manually triggered, proceed even if there are no updates
+            # This allows testing the workflow
+            if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+              echo "Manually triggered workflow - proceeding with update process for testing"
+              echo "updates_available=true" >> $GITHUB_OUTPUT
+            else
+              echo "updates_available=false" >> $GITHUB_OUTPUT
+              echo "No updates available from upstream repository."
+            fi
           fi
 
       - name: Apply Updates
@@ -114,7 +121,7 @@ jobs:
               
               if [ -n "$PLAYGROUNDS_HEADING" ]; then
                 # Insert deploy section before playgrounds heading
-                HEROKU_SECTION="## ☁️ Deploy to Heroku\n\nYou can deploy this MCP server to Heroku with one click using the button below:\n\n[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/dsouza-anush/brightdata-mcp-heroku)\n\nAfter deployment, make sure to set the required environment variables in your Heroku app settings.\n"
+                HEROKU_SECTION="## ☁️ Deploy to Heroku\n\nYou can deploy this MCP server to Heroku with one click using the button below:\n\n[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/dsouza-anush/brightdata-mcp-heroku)\n\nAfter deployment, make sure to set the required environment variables in your Heroku app settings.\n\nThis MCP server is compatible with Heroku Inference and can be registered with your AI models. For detailed instructions, see the [Heroku-specific documentation](README_HEROKU.md#using-with-heroku-inference).\n"
                 sed -i "${PLAYGROUNDS_HEADING}i${HEROKU_SECTION}\n" README.md
               fi
             fi
